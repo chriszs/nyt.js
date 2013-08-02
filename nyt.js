@@ -39,6 +39,21 @@ NYT.prototype.campaignFinance = function (params, callback) {
   }
 };
 
+
+NYT.prototype.campaignFinance = function (params, callback) {
+  var defaultParams = {
+    'api-key': this.settings.congressAPIKey,
+    'request': 'members'
+  };
+  var paramsObj = _.defaults(params, defaultParams);
+
+  if (!paramsObj['api-key']) {
+    throw new Error('No API Key specified');
+  } else {
+    invokeCampaignFinanceCall(paramsObj, callback);
+  }
+};
+
 NYT.prototype.bestSellers = function (params, callback) {
   var defaultParams = {
     'offset': '',
@@ -100,6 +115,42 @@ function invokeCampaignFinanceCall(params, callback) {
   
   cleanFinanceParams(params);
   invoke(url, params, callback);
+}
+
+function invokeCongressCall(params, callback) {
+  var url = '/svc/politics/v3/us/legislative/congress/';
+  var request = params.request;
+  var congress = params.congress ? params.congress : '113';
+
+  if (request === "members") {
+    if (!("chamber" in params)) {
+      throw new Error("You must specify a chamber -- house or senate.");
+    }
+    url = url + congress + '/' + params.chamber +  '/members.json';
+  } else if (request === "nomineeLists") {
+    if (!("category" in params)) {
+      throw new Error('You must specify a nominee list category -- received, updated, confirmed, etc.');
+    }
+    url = url + congress + '/nominees/' + params.category +  '.json';
+  } else if (request === "nomineeDetails") {
+    if (!("id" in params)) {
+      throw new Error('You must specify a nominee ID.');
+    }
+    url = url + congress + '/nominees/' + params["id"] +  '.json';
+  }
+  
+  cleanCongressParams(params);
+  invoke(url, params, callback);
+}
+
+
+function cleanCongressParams(params) {
+  var unwantedParams = ["congress","chamber","category","id","request"];
+  for (var i in unwantedParams) {
+    if (!(unwantedParams[i] in params)) {
+      delete params[unwantedParams[i]];
+    }
+  }
 }
 
 function cleanFinanceParams(params) {
