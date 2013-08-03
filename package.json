@@ -3,6 +3,7 @@
   "description": "A simple wrapper for the NY Times Developer API.",
   "version": "0.0.1",
   "private": true,
+  "main": "./nyt.js",
   "engines": {
     "node": "0.8.10",
     "npm": "1.1.x"
