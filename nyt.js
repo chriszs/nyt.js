@@ -5,7 +5,8 @@ function NYT(opts) {
   this.defaultSettings = {
     articlesAPIKey: undefined,
     campaignFinanceAPIKey: undefined,
-    bestSellersAPIKey: undefined
+    bestSellersAPIKey: undefined,
+    congressAPIKey: undefined
   };
 
   this.settings = opts ? _.defaults(opts, this.defaultSettings) : this.defaultSettings;
@@ -40,7 +41,7 @@ NYT.prototype.campaignFinance = function (params, callback) {
 };
 
 
-NYT.prototype.campaignFinance = function (params, callback) {
+NYT.prototype.congress = function (params, callback) {
   var defaultParams = {
     'api-key': this.settings.congressAPIKey,
     'request': 'members'
@@ -50,7 +51,7 @@ NYT.prototype.campaignFinance = function (params, callback) {
   if (!paramsObj['api-key']) {
     throw new Error('No API Key specified');
   } else {
-    invokeCampaignFinanceCall(paramsObj, callback);
+    invokeCongressCall(paramsObj, callback);
   }
 };
 
@@ -147,7 +148,7 @@ function invokeCongressCall(params, callback) {
 function cleanCongressParams(params) {
   var unwantedParams = ["congress","chamber","category","id","request"];
   for (var i in unwantedParams) {
-    if (!(unwantedParams[i] in params)) {
+    if (unwantedParams[i] in params) {
       delete params[unwantedParams[i]];
     }
   }
@@ -203,6 +204,9 @@ function buildRequestURL(path) {
 
 function invoke(path, params, callback) {
   var url = buildRequestURL(path);
+
+  console.log(url);
+  console.log(params);
 
   request(url, {qs: params}, function (error, response, body) {
     callback(JSON.parse(body));
