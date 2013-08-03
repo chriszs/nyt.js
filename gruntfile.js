@@ -23,5 +23,5 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-simple-mocha');
 
   // Default task.
-  grunt.registerTask('default', 'lint simplemocha');
+  grunt.registerTask('default', ['simplemocha']);
 };
