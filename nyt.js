@@ -205,9 +205,6 @@ function buildRequestURL(path) {
 function invoke(path, params, callback) {
   var url = buildRequestURL(path);
 
-  console.log(url);
-  console.log(params);
-
   request(url, {qs: params}, function (error, response, body) {
     callback(JSON.parse(body));
   });
