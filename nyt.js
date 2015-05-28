@@ -206,6 +206,16 @@ function invoke(path, params, callback) {
   var url = buildRequestURL(path);
 
   request(url, {qs: params}, function (error, response, body) {
-    callback(JSON.parse(body));
+    if (!error && response.statusCode == 200) {
+      try {
+        callback(JSON.parse(body));
+      }
+      catch (e) {
+        callback({ status: 'NOT OK' });
+      }
+    }
+    else {
+      callback({ status: 'NOT OK' });
+    }
   });
 }
